@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+enum Role {
+    RECEPCIONISTA
+    MEDICO
+    GERENCIA
+}
+
+enum AppointmenStatus {
+    PROGRAMADA
+    COMPLETADA
+    CANCELADA
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    email     String   @unique
+    password  String
+    role      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    doctor  Doctor?
+    patient Patient?
+}
+
+model Speciality {
+    id      Int      @id @default(autoincrement())
+    name    String   @unique
+    doctors Doctor[]
+}
+
+model Doctor {
+    id           Int              @id @default(autoincrement())
+    name         String
+    lastName     String
+    specialityId Int
+    userId       Int              @unique
+    activo       Boolean          @default(true)
+    appointments Appointment[]
+    schedules    DoctorSchedule[]
+    speciality   Speciality       @relation(fields: [specialityId], references: [id])
+    user         User             @relation(fields: [userId], references: [id])
+}
+
+model Patient {
+    id        Int      @id @default(autoincrement())
+    name      String
+    lastName  String
+    email     String   @unique
+    phone     String
+    birthDate DateTime
+    createdAt DateTime @default(now())
+    address   String
+    userId    Int?     @unique
+
+    user         User?         @relation(fields: [userId], references: [id])
+    appointments Appointment[]
+}
+
+model Appointment {
+    id        Int              @id @default(autoincrement())
+    date      DateTime
+    status    AppointmenStatus @default(PROGRAMADA)
+    patientID Int
+    doctorId  Int
+    createdAt DateTime         @default(now())
+
+    patient Patient @relation(fields: [patientID], references: [id])
+    doctor  Doctor  @relation(fields: [doctorId], references: [id])
+}
+
+model DoctorSchedule {
+    id           Int     @id @default(autoincrement())
+    doctorId     Int
+    dayOfWeek    Int
+    startTime    String
+    endTime      String
+    slotDuration Int     @default(30)
+    activo       Boolean @default(true)
+
+    doctor Doctor @relation(fields: [doctorId], references: [id])
+
+    @@index([doctorId, dayOfWeek])
+}
