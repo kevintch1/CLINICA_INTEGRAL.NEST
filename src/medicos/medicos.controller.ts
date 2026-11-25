@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 
 import { MedicosService } from './medicos.service.js';
+import { CreateMedicoDto } from './dto/create-medico.dto.js';
+import { UpdateMedicoDto } from './dto/update-medico.dto.js';
 
 @Controller('medicos')
 export class MedicosController {
@@ -32,14 +34,14 @@ export class MedicosController {
     }
 
     @Post()
-    create(@Body() datos: any) {
+    create(@Body() datos: CreateMedicoDto) {
         return this.medicosService.create(datos);
     }
 
     @Put(':id')
     async update(
         @Param('id') id: string,
-        @Body() datos: any
+        @Body() datos: UpdateMedicoDto
     ) {
         const medico = await this.medicosService.findOne(Number(id));
 

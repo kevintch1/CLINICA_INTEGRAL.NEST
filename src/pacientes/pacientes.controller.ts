@@ -10,18 +10,18 @@ import {
 } from '@nestjs/common';
 
 import { PacientesService } from './pacientes.service.js';
+import { CreatePacienteDto } from './dto/create-paciente.dto.js';
+import { UpdatePacienteDto } from './dto/update-paciente.dto.js';
 
 @Controller('pacientes')
 export class PacientesController {
     constructor(private readonly pacientesService: PacientesService) { }
 
-    // GET /pacientes
     @Get()
     findAll() {
         return this.pacientesService.findAll();
     }
 
-    // GET /pacientes/1
     @Get(':id')
     async findOne(@Param('id') id: string) {
         const paciente = await this.pacientesService.findOne(Number(id));
@@ -33,18 +33,16 @@ export class PacientesController {
         return paciente;
     }
 
-    // POST /pacientes
     @Post()
-    create(@Body() datos: any) {
-        datos.birthDate = new Date(datos.birthDate);
+    create(@Body() datos: CreatePacienteDto) {
         return this.pacientesService.create(datos);
     }
 
-    // PUT /pacientes/1
+
     @Put(':id')
     async update(
         @Param('id') id: string,
-        @Body() datos: any
+        @Body() datos: UpdatePacienteDto
     ) {
         const paciente = await this.pacientesService.findOne(Number(id));
 
@@ -52,14 +50,10 @@ export class PacientesController {
             throw new NotFoundException('Paciente no encontrado');
         }
 
-        if (datos.birthDate) {
-            datos.birthDate = new Date(datos.birthDate);
-        }
 
         return this.pacientesService.update(Number(id), datos);
     }
 
-    // DELETE /pacientes/1
     @Delete(':id')
     async remove(@Param('id') id: string) {
         const paciente = await this.pacientesService.findOne(Number(id));
