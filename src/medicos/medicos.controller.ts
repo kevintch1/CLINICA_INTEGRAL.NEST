@@ -39,15 +39,11 @@ export class MedicosController {
     }
 
     @Put(':id')
-    async update(
+    update(
         @Param('id') id: string,
         @Body() datos: UpdateMedicoDto
     ) {
-        const medico = await this.medicosService.findOne(Number(id));
 
-        if (!medico) {
-            throw new NotFoundException('Médico no encontrado');
-        }
 
         return this.medicosService.update(Number(id), datos);
     }
