@@ -40,16 +40,10 @@ export class PacientesController {
 
 
     @Put(':id')
-    async update(
+    update(
         @Param('id') id: string,
         @Body() datos: UpdatePacienteDto
     ) {
-        const paciente = await this.pacientesService.findOne(Number(id));
-
-        if (!paciente) {
-            throw new NotFoundException('Paciente no encontrado');
-        }
-
 
         return this.pacientesService.update(Number(id), datos);
     }
