@@ -8,6 +8,7 @@ import {
 
 import { AuthService } from './auth.service.js';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { Public } from './decorators/public.decorator.js';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -25,6 +26,7 @@ export class AuthController {
             required: ['email', 'password', 'role']
         }
     })
+    @Public()
     @Post('register')
     register(
         @Body() datos: {
@@ -56,6 +58,7 @@ export class AuthController {
             required: ['email', 'password']
         }
     })
+    @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
     login(
