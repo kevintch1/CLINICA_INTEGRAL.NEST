@@ -6,13 +6,21 @@ import {
     Delete,
     Param,
     Body,
-    NotFoundException
+    NotFoundException,
+    UseGuards
 } from '@nestjs/common';
 
 import { MedicosService } from './medicos.service.js';
 import { CreateMedicoDto } from './dto/create-medico.dto.js';
 import { UpdateMedicoDto } from './dto/update-medico.dto.js';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../auth/guards/roles.guard.js';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('RECEPCIONISTA')
 @Controller('medicos')
 export class MedicosController {
     constructor(private readonly medicosService: MedicosService) { }
